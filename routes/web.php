@@ -70,6 +70,9 @@ Route::group(['prefix'=>'user','middleware'=>'isUser'], function(){
 Route::group(['prefix'=>'admin','middleware'=>'isAdmin'],function(){
     Route::get('/dashbord',[AdminController::class,'dashbord']);
     Route::get('/dashbord/{limit}/{offset}',[AdminController::class,'dashbordlimit']);
+
+    Route::get('/editbooking/{bookingId}',[BookingController::class,'admineditbookingWithId']);
+    Route::post('/updatebooking',[BookingController::class,'adminupdateBookingWithId']);
 });
 
 
@@ -77,7 +80,16 @@ Route::group(['prefix'=>'admin','middleware'=>'isAdmin'],function(){
 Route::group(['prefix'=>'booking','middleware'=>'BookingRoom'],function(){
     Route::get('/{roomId}',[BookingController::class,'getBookingInRoom']);;
     Route::post('/addbooking',[BookingController::class,'addBooking']);
-    // Route::post('/',[BookingController::class,'addBooking']);
+
+
+    // new route for booking
+    // update
+    Route::get('/editbooking/{bookingId}',[BookingController::class,'editbookingWithId']);
+    Route::post('/updatebooking',[BookingController::class,'updateBookingWithId']);
+
+    // add new
+    Route::get('/addnewbooking/{roomId}');
+
 
 
 });

@@ -47,6 +47,10 @@ class BookingController extends Controller
             return redirect('/booking/' . $roomId)->with('message', 'ต้องจองเวลาเท่ากับ 1 ชั่วโมงเท่านั้น');
         }
 
+        if($bookingTimeFinish > $bookingTimeStart){
+            return redirect('/booking/' . $roomId)->with('message', 'กรอกเวลาผิดพลาด');
+        }
+
 
         $result = BookingRepository::addBooking(
             $bookingAgenda,
@@ -66,7 +70,7 @@ class BookingController extends Controller
         return redirect('/booking/' . $roomId)->with('message', 'ไม่สามารถจองได้เพราะทับเวลาคนอื่น');
     }
 
-        // can booking
+    // can booking
     //     if($dateSelect->gte($dateNow)){
     //         $result = BookingRepository::addBooking($bookingAgenda, $bookingDate, $bookingTimeStart, $bookingTimeFinish, $userId, $roomId);
     //         if($result){
@@ -109,7 +113,10 @@ class BookingController extends Controller
         $bookingTimeStart = $req->bookingTimeStart ;
         $bookingTimeFinish = $req->bookingTimeFinish;
         $roomId = $req->roomId;
-        BookingRepository::update( $bookingId,$bookingAgenda,$bookingDate,$bookingTimeStart,$bookingTimeFinish,$roomId);
+        $updateResult = BookingRepository::update( $bookingId,$bookingAgenda,$bookingDate,$bookingTimeStart,$bookingTimeFinish,$roomId);
+        if(!$updateResult){
+            return redirect('/booking/'.$roomId)->with('message','ไม่สามารถแก้ไขการจองได้เพราะทับเวลาคนอื่น');
+        }
         return redirect('/booking/'.$roomId);
         // return redirect('/room/'.$roomId);
     }
@@ -149,7 +156,49 @@ class BookingController extends Controller
 // }
 
 
+// new controller for booking method
 
+    // update for user
+    public static function editbookingWithId($bookingId){
+        $booking = BookingRepository::getBookingbyId($bookingId);
+        $room = RoomRepository::getRoomById($booking->roomId);
+        return view('booking/userbookingupdate',compact('booking','room'));
+    }
+
+    public static function updateBookingWithId(Request $req){
+        $bookingId = $req->bookingId;
+        $bookingAgenda = $req->bookingAgenda;
+        $bookingDate = $req->bookingDate;
+        $bookingTimeStart = $req->bookingTimeStart ;
+        $bookingTimeFinish = $req->bookingTimeFinish;
+        $roomId = $req->roomId;
+        $updateResult = BookingRepository::update($bookingId,$bookingAgenda,$bookingDate,$bookingTimeStart,$bookingTimeFinish,$roomId);
+        if(!$updateResult){
+            return redirect('/editbooking/'.$bookingId)->with('message','ไม่สามารถแก้ไขการจองได้เพราะทับเวลาคนอื่น');
+        }
+        return redirect('/editbooking/'.$bookingId)->with('success','แก้ไขการจองเรียบร้อย');
+    }
+    // update for admin
+    public static function admineditbookingWithId($bookingId){
+        $booking = BookingRepository::getBookingbyId($bookingId);
+        $room = RoomRepository::getRoomById($booking->roomId);
+        return view('booking/adminbookingupdate',compact('booking','room'));
+    }
+
+    public static function adminupdateBookingWithId(Request $req){
+        $bookingId = $req->bookingId;
+        $bookingAgenda = $req->bookingAgenda;
+        $bookingDate = $req->bookingDate;
+        $bookingTimeStart = $req->bookingTimeStart ;
+        $bookingTimeFinish = $req->bookingTimeFinish;
+        $roomId = $req->roomId;
+        $updateResult = BookingRepository::update($bookingId,$bookingAgenda,$bookingDate,$bookingTimeStart,$bookingTimeFinish,$roomId);
+        if(!$updateResult){
+            return redirect('/admin/editbooking/'.$bookingId)->with('message','ไม่สามารถแก้ไขการจองได้เพราะทับเวลาคนอื่น');
+        }
+        return redirect('/admin/editbooking/'.$bookingId)->with('success','แก้ไขการจองเรียบร้อย');
+    }
+    // add new
 
 
 

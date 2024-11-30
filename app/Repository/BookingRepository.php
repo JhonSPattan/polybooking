@@ -22,26 +22,21 @@ class BookingRepository
                 select *
                 from booking
                 where
-                    ((booking.bookingTimeStart between ? and ? and booking.bookingTimeFinish between ? and ?)
+                    (( (? > booking.bookingTimeStart and ? < booking.bookingTimeFinish) or (? > booking.bookingTimeStart and ? < booking.bookingTimeFinish))
                     or
                     (booking.bookingTimeStart < ? and booking.bookingTimeFinish > ?))
                     and booking.roomId = ?
                     and booking.bookingDate = ?
-            ) as result ', [$bookingTimeStart, $bookingTimeFinish, $bookingTimeStart, $bookingTimeFinish, $bookingTimeStart, $bookingTimeFinish, $roomId, $bookingDate]);
-
-
-
-
+            ) as result ', [$bookingTimeStart, $bookingTimeStart, $bookingTimeFinish, $bookingTimeFinish, $bookingTimeStart, $bookingTimeFinish,  $roomId, $bookingDate]);
         if ($isbooking['0']->result == 0) {
             $booking = new Booking();
             $booking->bookingAgenda = $bookingAgenda;
             $booking->bookingDate = $bookingDate;
-            $booking->bookingTimeStart = $bookingTimeStart;
+            $booking->bookingTimeStart= $bookingTimeStart;
             $booking->bookingTimeFinish = $bookingTimeFinish;
             $booking->userId = $userId;
-            $booking->roomId = $roomId;
-            $result = $booking->save();
-            return $result;
+            $booking->roomId= $roomId;
+            return $booking->save();
         }
         return false;
     }
@@ -53,28 +48,33 @@ class BookingRepository
     }
     public static function update($bookingId, $bookingAgenda, $bookingDate, $bookingTimeStart, $bookingTimeFinish, $roomId)
     {
+        // SELECT booking.bookingId, booking.bookingDate, booking.bookingTimeStart, booking.bookingTimeFinish, room.roomId FROM booking INNER JOIN room on booking.roomId = room.roomId WHERE booking.bookingDate = "2024-11-30" AND room.roomId = 2 AND (
+            // (('20:02:00' BETWEEN booking.bookingTimeStart AND booking.bookingTimeFinish) OR ('21:02:00' BETWEEN booking.bookingTimeStart AND booking.bookingTimeFinish))
+                // OR (booking.bookingTimeStart < '20:02:00' AND booking.bookingTimeFinish > '21:02:00')
+            // );
+            // SELECT EXISTS(SELECT * FROM booking INNER JOIN room on booking.roomId = room.roomId WHERE booking.bookingDate = '2024-11-30' AND room.roomId = 2 AND (
+            //     (('20:02:00' BETWEEN booking.bookingTimeStart AND booking.bookingTimeFinish) OR ('21:02:00' BETWEEN booking.bookingTimeStart AND booking.bookingTimeFinish))
+            //     OR (booking.bookingTimeStart < '20:02:00' AND booking.bookingTimeFinish > '21:02:00')
+            // )) as result;
         DB::enableQueryLog();
         $isbooking = DB::select('
             select exists(
                 select *
                 from booking
                 where
-                    ((booking.bookingTimeStart between ? and ? and booking.bookingTimeFinish between ? and ?)
+                    (( (? > booking.bookingTimeStart and ? < booking.bookingTimeFinish) or (? > booking.bookingTimeStart and ? < booking.bookingTimeFinish))
                     or
                     (booking.bookingTimeStart < ? and booking.bookingTimeFinish > ?))
                     and booking.roomId = ?
                     and booking.bookingDate = ?
                     and booking.bookingId != ?
-            ) as result ', [$bookingTimeStart, $bookingTimeFinish, $bookingTimeStart, $bookingTimeFinish, $bookingTimeStart, $bookingTimeFinish, $roomId, $bookingDate, $bookingId]);
+            ) as result ', [$bookingTimeStart, $bookingTimeStart, $bookingTimeFinish, $bookingTimeFinish, $bookingTimeStart, $bookingTimeFinish,  $roomId, $bookingDate, $bookingId]);
         if ($isbooking['0']->result == 0) {
             $result = Booking::where('bookingId', '=', $bookingId)->update([
-                //this  'bookingAgenda' form database
                 'bookingAgenda' => $bookingAgenda,
                 'bookingDate' => $bookingDate,
                 'bookingTimeStart' => $bookingTimeStart,
                 'bookingTimeFinish' => $bookingTimeFinish
-
-
             ]);
             return $result;
         }

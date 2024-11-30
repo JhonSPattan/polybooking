@@ -44,13 +44,13 @@
                                     <td style="text-align: center">{{$booking->roomName}}</td>
                                     <td>
                                         <a class="btn btn-danger" {{route('delete',$booking->bookingId)}}
-                                            onclick="return confirm('คุณต้องการลบบทความ {{$booking->bookingId}}หรือไม่')"
+                                            onclick="return confirm('คุณต้องการลบการจอง {{$booking->bookingId}}หรือไม่')"
                                             >
                                             ลบ
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="/bookingedit/{{$booking->bookingId}}" class="btn btn-warning" >เเก้ไข</a>
+                                        <a href="/admin/editbooking/{{$booking->bookingId}}" class="btn btn-warning" >เเก้ไข</a>
                                     </td>
                                     {{-- @if (\Carbon\Carbon::parse($booking->bookingDate." ".$booking->bookingTimeStart)->lt(\Carbon\Carbon::now()))
                                     <td colspan="2" style="text-align: center">
