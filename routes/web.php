@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
 
 
 /*
@@ -40,8 +42,6 @@ Route::group(['middleware'=>'guest'],function(){
 
     // Route::get('/',[RoomController::class,'getAllroomAlbum']);
     Route::get('/',[BookingController::class,'showfirstpage']);
-    
-
 
 
 });
@@ -58,12 +58,27 @@ Route::group(['middleware'=>'auth'],function(){
 
 });
 
+Route::group(['prefix'=>'user','middleware'=>'isUser'], function(){
+    Route::get('/dashbord',[UserController::class,'dashbord']);
+    Route::get('/dashbord/{limit}/{offset}',[UserController::class,'dashbordlimit']);
+
+    Route::post('/search',[UserController::class,'searchbooking']);
+    Route::get('/search/{roomName}/{limit}/{offset}',[UserController::class,'searchnextpage']);
+});
+
+
+Route::group(['prefix'=>'admin','middleware'=>'isAdmin'],function(){
+    Route::get('/dashbord',[AdminController::class,'dashbord']);
+    Route::get('/dashbord/{limit}/{offset}',[AdminController::class,'dashbordlimit']);
+});
+
+
 
 Route::group(['prefix'=>'booking','middleware'=>'BookingRoom'],function(){
     Route::get('/{roomId}',[BookingController::class,'getBookingInRoom']);;
     Route::post('/addbooking',[BookingController::class,'addBooking']);
     // Route::post('/',[BookingController::class,'addBooking']);
-  
+
 
 });
 

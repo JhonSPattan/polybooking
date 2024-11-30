@@ -30,24 +30,18 @@ class BookingController extends Controller
     public static function addBooking(Request $req){
         $bookingAgenda = $req->bookingAgenda;
         $bookingDate = $req->bookingDate;
-        // $bookingTimeStart = Carbon::parse($req->bookingTimeStart)->addMinutes(60);
-        // $bookingTimeFinish = Carbon::parse($req->bookingTimeFinish)->addMinutes(60);
         $bookingTimeStart = Carbon::parse($req->bookingTimeStart);
         $bookingTimeFinish = Carbon::parse($req->bookingTimeFinish);
-        // $bookingTimeStart = $req->bookingTimeStart ;
-        // $bookingTimeFinish = $req->bookingTimeFinish;
         $userId = $req->userId;
         $roomId = $req->roomId;
-
         $dateNow = Carbon::now();
         $dateSelect = Carbon::parse("$bookingDate {$bookingTimeStart->format('H:i:s')}");
-        // $dateRow = $bookingDate." ".$bookingTimeStart;
-        // $dateSelect = Carbon::parse($dateRow);
-        // $dateSelect = new Carbon($bookingDate);
+        $bookingDurationMinutes = $bookingTimeStart->diffInMinutes($bookingTimeFinish);
+
         if ($dateSelect->lt($dateNow)) {
             return redirect('/booking/' . $roomId)->with('message', 'ไม่สามารถจองย้อนหลังได้');
         }
-        $bookingDurationMinutes = $bookingTimeStart->diffInMinutes($bookingTimeFinish);
+
 
         if ($bookingDurationMinutes < 60) {
             return redirect('/booking/' . $roomId)->with('message', 'ต้องจองเวลาเท่ากับ 1 ชั่วโมงเท่านั้น');
@@ -65,6 +59,7 @@ class BookingController extends Controller
 
 
         if ($result) {
+            // edit redirect to mybooking in user dashbord page
             return redirect('/roombooking')->with('message', 'จองสำเร็จ');
         }
 

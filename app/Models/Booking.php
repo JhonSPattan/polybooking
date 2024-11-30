@@ -20,5 +20,9 @@ class Booking extends Model
         return $this->belongsTo(User::class,'userId');
     }
 
+    public function room(){
+        return $this->belongsTo(Room::class,'roomId');
+    }
+
     use HasFactory;
 }

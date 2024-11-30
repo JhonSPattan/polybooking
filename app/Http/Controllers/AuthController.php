@@ -83,7 +83,13 @@ class AuthController extends Controller{
         $firstName = Auth::user()->firstName;
         $lastName = Auth::user()->lastName;
 
-        echo "Name is: ".$firstName." ".$lastName;
+        // echo "Name is: ".$firstName." ".$lastName;
+
+        if(Auth::user()->userTypeId == 1){
+            return redirect('/admin/dashbord');
+        }elseif(Auth::user()->userTypeId == 2){
+            return redirect('/user/dashbord');
+        }
     }
 
 
