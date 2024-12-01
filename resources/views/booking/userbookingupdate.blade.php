@@ -17,7 +17,7 @@
                 @if (session('success'))
                 <h6 class="font-weight-bold text-success">{{session('success')}}</h6>
                 @endif
-                <form class="forms-sample"  action="/bookingupdate" method="post" >
+                <form class="forms-sample"  action="/booking/updatebooking" method="post" >
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="form-group">
                         <label for="roomnameInput">ชื่อห้องประชุม</label>

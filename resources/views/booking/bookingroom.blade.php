@@ -70,29 +70,47 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>ลำดับที่</th>
-                                <th>หัวข้อการประชุม</th>
-                                <th>วันที่ใช้งาน</th>
-                                <th>เวลาเริ่ม</th>
-                                <th>เวลาสิ้นสุด</th>
-                                <th>ผู้จอง</th>
-                                <th>ลบข้อมูลการจอง</th>
-                                <th>เเก้ไขข้อมูลการจอง</th>
+                                <th style="text-align: center">ลำดับที่</th>
+                                <th style="text-align: center">หัวข้อการประชุม</th>
+                                <th style="text-align: center">วันที่ใช้งาน</th>
+                                <th style="text-align: center">เวลาเริ่ม</th>
+                                <th style="text-align: center">เวลาสิ้นสุด</th>
+                                <th style="text-align: center">ผู้จอง</th>
+                                {{-- <th>ลบข้อมูลการจอง</th>
+                                <th>เเก้ไขข้อมูลการจอง</th> --}}
+                                <th colspan="2" style="text-align: center">เมนู</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($bookingList as $booking)
                             <tr>
-                                <td>{{$booking->bookingId}}</td>
-                                <td>{{$booking->bookingAgenda}}</td>
-                                <td>{{$booking->bookingDate}}</td>
-                                <td>{{$booking->bookingTimeStart}}</td>
-                                <td>{{$booking->bookingTimeFinish}}</td>
-                                <td>{{$booking->user->firstName." ".$booking->user->lastName}}</td>
-                                <td><a href="{{route('delete',$booking->bookingId)}} " class="btn btn-danger"
-                                    onclick="return confirm('คุณต้องการลบบทความ {{$booking->bookingId}}หรือไม่')"
-                                     >ลบ </a></td>
-                                <td><a href="/bookingedit/{{$booking->bookingId}}" class="btn btn-warning">เเก้ไข</a></td>
+                                <td style="text-align: center">{{$booking->bookingId}}</td>
+                                <td style="text-align: center">{{$booking->bookingAgenda}}</td>
+                                <td style="text-align: center">{{$booking->bookingDate}}</td>
+                                <td style="text-align: center">{{$booking->bookingTimeStart}}</td>
+                                <td style="text-align: center">{{$booking->bookingTimeFinish}}</td>
+                                <td style="text-align: center">{{$booking->user->firstName." ".$booking->user->lastName}}</td>
+
+                                @if(\Carbon\Carbon::parse($booking->bookingDate." ".$booking->bookingTimeStart)->lt(\Carbon\Carbon::now()))
+                                <td colspan="2" style="text-align: center">
+                                    ไม่สามารถแก้ไขหรือลบได้เนื่องจากเวลาเลยกำหนด
+                                </td>
+                                @else
+                                @if ($userId != $booking->userId)
+                                <td colspan="2" style="text-align: center">
+                                    ไม่สามารถแก้ไขหรือลบได้เนื่องจากผู้ใช้ไม่ได้เป็นคนเพิ่ม
+                                </td>
+                                @else
+                                <td style="text-align: center">
+                                    <a href="{{route('delete',$booking->bookingId)}} " class="btn btn-danger" onclick="return confirm('คุณต้องการลบการจอง {{$booking->bookingId}}หรือไม่')">ลบ</a>
+                                </td>
+                                <td style="text-align: center">
+                                    <a href="/booking/editbooking/{{$booking->bookingId}}" class="btn btn-warning">เเก้ไข</a>
+                                </td>
+                                @endif
+                                @endif
+
+
                             </tr>
                             @endforeach
                         </tbody>

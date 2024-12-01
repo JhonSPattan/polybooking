@@ -88,7 +88,8 @@ Route::group(['prefix'=>'booking','middleware'=>'BookingRoom'],function(){
     Route::post('/updatebooking',[BookingController::class,'updateBookingWithId']);
 
     // add new
-    Route::get('/addnewbooking/{roomId}');
+    Route::get('/{roomId}',[BookingController::class,'getBookingInRoom']);;
+    Route::post('/addbooking',[BookingController::class,'addBooking']);
 
 
 

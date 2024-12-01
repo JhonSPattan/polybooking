@@ -35,7 +35,7 @@
                                     <th style="text-align: center">เวลาเริ่ม</th>
                                     <th style="text-align: center">เวลาสิ้นสุด</th>
                                     <th style="text-align: center">ผู้จอง</th>
-                                    <th style="text-align: center">ลบข้อมูลการจอง</th>
+                                    <th style="text-align: center">ชื่อห้อง</th>
                                     <th colspan="2" style="text-align: center">เมนู</th>
                                 </tr>
                             </thead>
@@ -58,17 +58,12 @@
                                         </td>
                                         @else
                                         <td>
-                                            <a class="btn btn-danger" {{route('delete',$booking->bookingId)}}
-                                                onclick="return confirm('คุณต้องการลบการจอง {{$booking->bookingId}}หรือไม่')"
-                                                >
-                                                ลบ
-                                            </a>
+                                            <a href="{{route('delete',$booking->bookingId)}} "class="btn btn-danger" onclick="return confirm('คุณต้องการลบการจอง {{$booking->bookingId}}หรือไม่')">ลบ </a>
                                         </td>
                                         <td>
-                                            <a href="/editbooking/{{$booking->bookingId}}" class="btn btn-warning" >เเก้ไข</a>
+                                            <a href="/booking/editbooking/{{$booking->bookingId}}" class="btn btn-warning" >เเก้ไข</a>
                                         </td>
                                         @endif
-
                                     </tr>
                                 @endforeach
                             </tbody>

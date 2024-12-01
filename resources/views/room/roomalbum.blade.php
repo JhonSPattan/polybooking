@@ -101,7 +101,7 @@
             <div class="row py-lg-5">
                 <div class="col-lg-6 col-md-8 mx-auto">
                     <h1 class="fw-light">ระบบจองห้อง</h1>
-                    <p class="lead text-muted">กรุณาเลือกห้องที่ต้องการจอง</p>
+                    <p class="lead text-muted">กรุณาเลือกห้องที่ต้องการจอง หรือกลับหน้า <a href="/home">Home</a></p>
                 </div>
             </div>
         </section>

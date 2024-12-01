@@ -45,7 +45,9 @@ class RoomController extends Controller{
         $roomId = $booking->roomId;
         DB::table('booking')->where('bookingId',$bookingId)->delete();
         // dd(DB::table('booking')->where('bookingId',$bookingId)->delete());
-        return redirect('/room/'.$roomId);
+        // return redirect('/room/'.$roomId);
+
+        return redirect('/user/dashbord');
 
     }
     // public static function updateBookingRoom( Request $req,$bookingId){

@@ -36,8 +36,8 @@
             </a>
             <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="/room">ห้องทั้งหมด</a></li>
-                <li class="nav-item"> <a class="nav-link" href="/room/add">เพิ่มห้อง</a></li>
+                <li class="nav-item"> <a class="nav-link" href="#">ห้องทั้งหมด</a></li>
+                <li class="nav-item"> <a class="nav-link" href="#">เพิ่มห้อง</a></li>
               </ul>
             </div>
           </li>

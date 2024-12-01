@@ -43,11 +43,7 @@
                                     <td style="text-align: center">{{$booking->userbookingName}}</td>
                                     <td style="text-align: center">{{$booking->roomName}}</td>
                                     <td>
-                                        <a class="btn btn-danger" {{route('delete',$booking->bookingId)}}
-                                            onclick="return confirm('คุณต้องการลบการจอง {{$booking->bookingId}}หรือไม่')"
-                                            >
-                                            ลบ
-                                        </a>
+                                        <a href="{{route('delete',$booking->bookingId)}} "class="btn btn-danger" onclick="return confirm('คุณต้องการลบการจอง {{$booking->bookingId}}หรือไม่')">ลบ</a>
                                     </td>
                                     <td>
                                         <a href="/admin/editbooking/{{$booking->bookingId}}" class="btn btn-warning" >เเก้ไข</a>
@@ -58,11 +54,7 @@
                                     </td>
                                     @else
                                     <td>
-                                        <a class="btn btn-danger" {{route('delete',$booking->bookingId)}}
-                                            onclick="return confirm('คุณต้องการลบบทความ {{$booking->bookingId}}หรือไม่')"
-                                            >
-                                            ลบ
-                                        </a>
+                                        <a href="{{route('delete',$booking->bookingId)}} "class="btn btn-danger" onclick="return confirm('คุณต้องการลบการจอง {{$booking->bookingId}}หรือไม่')">ลบ </a>
                                     </td>
                                     <td>
                                         <a href="/bookingedit/{{$booking->bookingId}}" class="btn btn-warning" >เเก้ไข</a>

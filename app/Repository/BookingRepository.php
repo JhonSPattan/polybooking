@@ -22,12 +22,16 @@ class BookingRepository
                 select *
                 from booking
                 where
-                    (( (? > booking.bookingTimeStart and ? < booking.bookingTimeFinish) or (? > booking.bookingTimeStart and ? < booking.bookingTimeFinish))
-                    or
-                    (booking.bookingTimeStart < ? and booking.bookingTimeFinish > ?))
+                    (
+                        ((? > booking.bookingTimeStart and ? < booking.bookingTimeFinish) or (? > booking.bookingTimeStart and ? < booking.bookingTimeFinish))
+                        or
+                        (booking.bookingTimeStart <= ? and booking.bookingTimeFinish >= ?)
+                        or
+                        ((booking.bookingTimeStart > ? and booking.bookingTimeStart < ?) or (booking.bookingTimeFinish > ? and booking.bookingTimeFinish < ?))
+                    )
                     and booking.roomId = ?
                     and booking.bookingDate = ?
-            ) as result ', [$bookingTimeStart, $bookingTimeStart, $bookingTimeFinish, $bookingTimeFinish, $bookingTimeStart, $bookingTimeFinish,  $roomId, $bookingDate]);
+            ) as result ', [$bookingTimeStart, $bookingTimeStart, $bookingTimeFinish, $bookingTimeFinish, $bookingTimeStart, $bookingTimeFinish, $bookingTimeStart, $bookingTimeFinish, $bookingTimeStart, $bookingTimeFinish, $roomId, $bookingDate]);
         if ($isbooking['0']->result == 0) {
             $booking = new Booking();
             $booking->bookingAgenda = $bookingAgenda;
@@ -49,26 +53,33 @@ class BookingRepository
     public static function update($bookingId, $bookingAgenda, $bookingDate, $bookingTimeStart, $bookingTimeFinish, $roomId)
     {
         // SELECT booking.bookingId, booking.bookingDate, booking.bookingTimeStart, booking.bookingTimeFinish, room.roomId FROM booking INNER JOIN room on booking.roomId = room.roomId WHERE booking.bookingDate = "2024-11-30" AND room.roomId = 2 AND (
-            // (('20:02:00' BETWEEN booking.bookingTimeStart AND booking.bookingTimeFinish) OR ('21:02:00' BETWEEN booking.bookingTimeStart AND booking.bookingTimeFinish))
-                // OR (booking.bookingTimeStart < '20:02:00' AND booking.bookingTimeFinish > '21:02:00')
-            // );
-            // SELECT EXISTS(SELECT * FROM booking INNER JOIN room on booking.roomId = room.roomId WHERE booking.bookingDate = '2024-11-30' AND room.roomId = 2 AND (
-            //     (('20:02:00' BETWEEN booking.bookingTimeStart AND booking.bookingTimeFinish) OR ('21:02:00' BETWEEN booking.bookingTimeStart AND booking.bookingTimeFinish))
-            //     OR (booking.bookingTimeStart < '20:02:00' AND booking.bookingTimeFinish > '21:02:00')
-            // )) as result;
+        // (('20:02:00' BETWEEN booking.bookingTimeStart AND booking.bookingTimeFinish) OR ('21:02:00' BETWEEN booking.bookingTimeStart AND booking.bookingTimeFinish))
+        //      OR (booking.bookingTimeStart < '20:02:00' AND booking.bookingTimeFinish > '21:02:00');
+        // );
+
+        // SELECT EXISTS(SELECT * FROM booking INNER JOIN room on booking.roomId = room.roomId WHERE booking.bookingDate = '2024-11-30' AND room.roomId = 2 AND (
+        //     (('20:02:00' BETWEEN booking.bookingTimeStart AND booking.bookingTimeFinish) OR ('21:02:00' BETWEEN booking.bookingTimeStart AND booking.bookingTimeFinish))
+        //     OR (booking.bookingTimeStart < '20:02:00' AND booking.bookingTimeFinish > '21:02:00')
+        // )) as result;
+
+
         DB::enableQueryLog();
         $isbooking = DB::select('
             select exists(
                 select *
                 from booking
                 where
-                    (( (? > booking.bookingTimeStart and ? < booking.bookingTimeFinish) or (? > booking.bookingTimeStart and ? < booking.bookingTimeFinish))
-                    or
-                    (booking.bookingTimeStart < ? and booking.bookingTimeFinish > ?))
+                    (
+                        ((? > booking.bookingTimeStart and ? < booking.bookingTimeFinish) or (? > booking.bookingTimeStart and ? < booking.bookingTimeFinish))
+                        or
+                        (booking.bookingTimeStart <= ? and booking.bookingTimeFinish >= ?)
+                        or
+                        ((booking.bookingTimeStart > ? and booking.bookingTimeStart < ?) or (booking.bookingTimeFinish > ? and booking.bookingTimeFinish < ?))
+                    )
                     and booking.roomId = ?
                     and booking.bookingDate = ?
                     and booking.bookingId != ?
-            ) as result ', [$bookingTimeStart, $bookingTimeStart, $bookingTimeFinish, $bookingTimeFinish, $bookingTimeStart, $bookingTimeFinish,  $roomId, $bookingDate, $bookingId]);
+            ) as result ', [$bookingTimeStart, $bookingTimeStart, $bookingTimeFinish, $bookingTimeFinish, $bookingTimeStart, $bookingTimeFinish, $bookingTimeStart, $bookingTimeFinish, $bookingTimeStart, $bookingTimeFinish, $roomId, $bookingDate, $bookingId]);
         if ($isbooking['0']->result == 0) {
             $result = Booking::where('bookingId', '=', $bookingId)->update([
                 'bookingAgenda' => $bookingAgenda,
@@ -82,7 +93,7 @@ class BookingRepository
     }
     public static function getBookingInRoombyUserId($roomId, $userId)
     {
-        $booking = Booking::where('booking.roomId', '=', $roomId)->where('booking.userId', '=', $userId)->get();
+        $booking = Booking::where('booking.roomId', '=', $roomId)->where('booking.userId', '=', $userId)->orderBy('booking.bookingDate','DESC')->orderBy('booking.bookingTimeStart','DESC')->get();
         return  $booking;
     }
 
@@ -120,20 +131,20 @@ class BookingRepository
     // FOR USER DASHBORD
     public static function getUserBooking($userId,$limit=5,$offset=1){
         // SELECT booking.bookingId, booking.bookingAgenda, booking.bookingDate, booking.bookingTimeStart, booking.bookingTimeFinish, concat(user.firstName," ",user.lastName) as userbookingName, user.userId, room.roomName
-        // FROM booking INNER JOIN user ON booking.userId = user.userId INNER JOIN room ON booking.roomId = room.roomId WHERE booking.userId = 7
-        // ORDER BY booking.bookingDate ASC, booking.bookingTimeStart ASC LIMIT J OFFSET K;
+        // FROM booking INNER JOIN user ON booking.userId = user.userId INNER JOIN room ON booking.roomId = room.roomId
+        // WHERE booking.userId = 7 ORDER BY booking.bookingDate DESC, booking.bookingTimeStart DESC LIMIT J OFFSET K;
         // a1+(n-1)*d => k = 1+($offset-1)*$limit
         // J = $limit
 
-        $k = 1+((int)$offset-1)*(int)$limit;
+        $k = ((int)$offset-1)*(int)$limit;
         $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', DB::raw('concat(user.firstName," ",user.lastName) as userbookingName'), 'room.roomName')
         ->join('user','booking.userId','=','user.userId')
         ->join('room', 'booking.roomId','=','room.roomId')
         ->where('user.userId','=',$userId)
         ->orderBy('booking.bookingDate','desc')
         ->orderBy('booking.bookingTimeStart','desc')
-        ->offset($k)
         ->limit($limit)
+        ->offset($k)
         ->get();
 
 
@@ -148,7 +159,7 @@ class BookingRepository
     }
 
     public static function getUserBookingSearch($userId, $roomName, $limit=5,$offset=1){
-        $k = 1+((int)$offset-1)*(int)$limit;
+        $k = ((int)$offset-1)*(int)$limit;
         $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', DB::raw('concat(user.firstName," ",user.lastName) as userbookingName'), 'room.roomName')
         ->join('user','booking.userId','=','user.userId')
         ->join('room', 'booking.roomId','=','room.roomId')
@@ -156,8 +167,8 @@ class BookingRepository
         ->where('room.roomName','like',"%{$roomName}%")
         ->orderBy('booking.bookingDate','desc')
         ->orderBy('booking.bookingTimeStart','desc')
-        ->offset($k)
         ->limit($limit)
+        ->offset($k)
         ->get();
         $bookingList = [];
         foreach($bookingDat as $dat){
@@ -182,16 +193,15 @@ class BookingRepository
 
     // FOR ADMIN DASHBORD
     public static function getBookingAdmin($limit=5,$offset=1){
-        $k = 1+((int)$offset-1)*(int)$limit;
+        $k = ((int)$offset-1)*(int)$limit;
         $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', DB::raw('concat(user.firstName," ",user.lastName) as userbookingName'), 'room.roomName')
         ->join('user','booking.userId','=','user.userId')
         ->join('room', 'booking.roomId','=','room.roomId')
         ->orderBy('booking.bookingDate','desc')
         ->orderBy('booking.bookingTimeStart','desc')
-        ->offset($k)
         ->limit($limit)
+        ->offset($k)
         ->get();
-
         $bookingList = [];
         foreach($bookingDat as $dat){
             $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->userbookingName, $dat->roomName);

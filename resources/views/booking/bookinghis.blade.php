@@ -7,14 +7,14 @@
         <div class="card-body">
             <h4 class="card-title">รายการจองห้อง {{$room->roomName}}</h4>
             <p class="card-description">
-                รายละเอียดการจองห้อง 
+                รายละเอียดการจองห้อง
             </p>
             <p class="btn btn-secondary ">เพิ่ม</p>
 
 
             {{-- <p style="position: absolute; right: 0;">เพิ่ม</p> --}}
 
-            
+
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -41,9 +41,7 @@
                             <th>{{$booking->userId}}</th>
                             {{-- <th>{{$booking->firstName}}</th>
                             <th>{{$booking->lastName}}</th> --}}
-                            <th><a href="{{route('delete',$booking->bookingId)}} " class="btn btn-danger"
-                                onclick="return confirm('คุณต้องการลบบทความ {{$booking->bookingId}}หรือไม่')"
-                                 >ลบ </a></th>
+                            <th><a href="{{route('delete',$booking->bookingId)}} "class="btn btn-danger" onclick="return confirm('คุณต้องการลบการจอง {{$booking->bookingId}}หรือไม่')">ลบ </a></th>
                             <th><a href="/bookingedit/{{$booking->bookingId}}" class="btn btn-warning">เเก้ไข</a></th>
                         </tr>
                         @endforeach
