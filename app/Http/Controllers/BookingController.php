@@ -36,7 +36,7 @@ class BookingController extends Controller
         $roomId = $req->roomId;
         $dateNow = Carbon::now();
         $dateSelect = Carbon::parse($bookingDate." ".$bookingTimeStart->format('H:i:s'));
-        $bookingDurationMinutes = $bookingTimeStart->diffInMinutes($bookingTimeFinish);
+        $bookingDurationMinutes = $bookingTimeFinish->diffInMinutes($bookingTimeStart);
 
         if ($dateSelect->lt($dateNow)) {
             return redirect('/booking/' . $roomId)->with('message', 'ไม่สามารถจองย้อนหลังได้');
@@ -89,7 +89,7 @@ class BookingController extends Controller
 
         $dateNow = Carbon::now();
         $dateSelect = Carbon::parse($bookingDate." ".$bookingTimeStart);
-        $bookingDurationMinutes = $bookingTimeStartCar->diffInMinutes($bookingTimeFinishCar);
+        $bookingDurationMinutes = $bookingTimeFinishCar->diffInMinutes($bookingTimeStartCar);
 
         if ($dateSelect->lt($dateNow)) {
             return redirect('/booking/' . $roomId)->with('message', 'ไม่สามารถจองย้อนหลังได้');
@@ -147,7 +147,7 @@ class BookingController extends Controller
 
         $dateNow = Carbon::now();
         $dateSelect = Carbon::parse($bookingDate." ".$bookingTimeStart);
-        $bookingDurationMinutes = $bookingTimeStartCar->diffInMinutes($bookingTimeFinishCar);
+        $bookingDurationMinutes = $bookingTimeFinishCar->diffInMinutes($bookingTimeStartCar);
 
         if ($dateSelect->lt($dateNow)) {
             return redirect('/booking/editbooking/'.$bookingId)->with('message', 'ไม่สามารถจองย้อนหลังได้');
@@ -189,7 +189,7 @@ class BookingController extends Controller
 
         $dateNow = Carbon::now();
         $dateSelect = Carbon::parse($bookingDate." ".$bookingTimeStart);
-        $bookingDurationMinutes = $bookingTimeStartCar->diffInMinutes($bookingTimeFinishCar);
+        $bookingDurationMinutes = $bookingTimeFinishCar->diffInMinutes($bookingTimeStartCar);
 
         if ($dateSelect->lt($dateNow)) {
             return redirect('/admin/editbooking/'.$bookingId)->with('message', 'ไม่สามารถจองย้อนหลังได้');
