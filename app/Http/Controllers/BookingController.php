@@ -19,7 +19,7 @@ class BookingController extends Controller
     public static function getBookingInRoom($roomId){
         $room = RoomRepository::getRoomById($roomId);
         $userId = Auth::user()->userId;
-        $bookingList = BookingRepository::getBookingInRoombyUserId($roomId,$userId);
+        $bookingList = BookingRepository::getBookingInRoomWithId($roomId);
         // dd($bookingList->toSql());
         // dd($bookingList['0']);
         // $bookingList = $room->booking;

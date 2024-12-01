@@ -97,6 +97,11 @@ class BookingRepository
         return  $booking;
     }
 
+    public static function getBookingInRoomWithId($roomId){
+        $booking = Booking::where('booking.roomId', '=', $roomId)->orderBy('booking.bookingDate','DESC')->orderBy('booking.bookingTimeStart','DESC')->get();
+        return  $booking;
+    }
+
     public static function getBookingDetailinCurrentDate($roomId){
         // SELECT booking.bookingAgenda, booking.bookingDate, booking.bookingTimeStart, booking.bookingTimeFinish, booking.roomId, user.firstName, user.lastName FROM booking INNER JOIN user ON booking.userId = user.userId WHERE booking.bookingDate = CURRENT_DATE AND booking.roomId = 1 ORDER BY booking.bookingTimeStart ASC;
         $bookingDetail = Booking::select(['booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', 'booking.roomId',
