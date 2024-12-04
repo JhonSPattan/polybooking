@@ -144,7 +144,15 @@
                                                 class="btn btn-sm btn-outline-secondary">จองห้อง</a>
                                             {{-- <a href="#" class="btn btn-sm btn-outline-secondary">รายละเอียด</a> --}}
                                         </div>
-                                        <small class="text-muted">9 mins</small>
+                                        @foreach ($bookingList as $booking)
+                                            @foreach ($booking as $bb)
+                                                @if ($bb->roomId == $room->roomId)
+                                                    <small class="text-muted">{{count($booking)}} การจอง</small>
+                                                @endif
+                                                @break
+                                            @endforeach
+                                        @endforeach
+
                                     </div>
                                 </div>
                             </div>
