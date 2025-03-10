@@ -64,9 +64,9 @@
                             </div>
                             <h4>ลงชื่อเข้าใช้</h4>
 
-                            {{-- @if (session('message'))
+                            @if (session('message'))
                                 <h6 class="font-weight-bold text-danger">{{ session('message') }}</h6>
-                            @endif --}}
+                            @endif
 
                             @if (session('messageok'))
                                 <h6 class="font-weight-bold text-success">{{ session('messageok') }}</h6>
@@ -97,7 +97,7 @@
                                             </span>
                                         </div>
                                         <input type="password" class="form-control form-control-lg border-left-0"
-                                            id="exampleInputPassword" placeholder="รหัสผ่าน" name="password"maxlength="6" minlength="6"
+                                            id="exampleInputPassword" placeholder="รหัสผ่าน" name="password"minlength="6"
                                             required
                                             pattern = "(?=.*\d)(?=.* [a-z])(?=.* [A-Z])(?=.*?[0-9])(?=.*?[~`!@#$%\^&*()\-_=+[\]{};:\x27.,\x22\\|/?><]).{4,}">
                                     </div>
@@ -115,9 +115,9 @@
                                     <input type="submit" value="ลงชื่อเข้าใช้"
                                         class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" />
                                 </div>
-                                <div class="text-center mt-4 font-weight-light">
+                                {{-- <div class="text-center mt-4 font-weight-light">
                                         ลืมรหัสผ่าน? <a href="/forgotpassword" class="text-primary">เปลี่ยนรหัสผ่าน</a>
-                                </div>
+                                </div> --}}
                             </form>
                         </div>
                     </div>

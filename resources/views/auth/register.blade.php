@@ -83,7 +83,7 @@
                                                 <i class="mdi mdi-lock text-primary"></i>
                                             </span>
                                         </div>
-                                        <input type="password" class="form-control form-control-lg border-left-0" id="exampleInputPassword" placeholder="รหัสผ่าน" name="password" maxlength="6" minlength="6" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*?[0-9])(?=.*?[~`!@#$%\^&*()\-_=+[\]{};:\x27.,\x22\\|/?><]).{4,}">
+                                        <input type="password" class="form-control form-control-lg border-left-0" id="exampleInputPassword" placeholder="รหัสผ่าน" name="password" minlength="6" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*?[0-9])(?=.*?[~`!@#$%\^&*()\-_=+[\]{};:\x27.,\x22\\|/?><]).{4,}">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -97,7 +97,7 @@
                                         <input type="text" class="form-control form-control-lg border-left-0" placeholder="เเผนก" name="department">
                                     </div>
                                 </div>
-                                {{-- <div class="form-group">
+                                <div class="form-group">
                                     <label>เบอร์โทรติดต่อ</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend bg-transparent">
@@ -107,8 +107,8 @@
                                         </div>
                                         <input type="text" class="form-control form-control-lg border-left-0" placeholder="เบอร์โทรติดต่อ" name="phone">
                                     </div>
-                                </div> --}}
-                                <div class="form-group">
+                                </div>
+                                {{-- <div class="form-group">
                                     <label>เบอร์โทรติดต่อ</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend bg-transparent">
@@ -142,7 +142,7 @@
                                             input.value = phone.substring(0, 3) + '-' + phone.substring(3, 10);
                                         }
                                     }
-                                </script>
+                                </script> --}}
                                 
 
                                 <!-- User Type Selection -->
