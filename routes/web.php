@@ -93,6 +93,7 @@ Route::group(['prefix'=>'admin','middleware'=>'isAdmin'],function(){
     Route::get('/editbooking/{bookingId}',[AdminController::class,'updateBookingbyIdFromAdmin']);
     Route::post('/updatebooking',[AdminController::class,'editBookingbyIdfromAdmin']);
 
+
     // Route::get('/settingdashbord',[AdminController::class,'settingdashbord']);
     // Route::post('/changpasswordByadmin',[AuthController::class,'updatepassword']);
 });
@@ -183,4 +184,12 @@ Route::get('/settingdashbord', [AdminController::class, 'settingdashbord'])->nam
 
 Route::get('/postsetting/{userId}', [AdminController::class, 'showPostSetting'])->name('postsetting');
 Route::post('/updatepasswordByadmin/{userId}', [AdminController::class, 'updatePassword'])->name('updatepasswordByadmin');
+Route::get('/registerByAdmin',[AdminController::class,'registerByAdmin']);
+Route::post('/registerpostByAdmin',[AdminController::class,'registerpostByAdmin']);
 // Route::get('/admin/search', [AdminController::class, 'searchByRoom'])->name('admin.searchByRoom');
+
+// Route::get('/admindashbord', function () {
+//     return view('dashbord/admindashbord');
+// });
+Route::get('/admindashbord', [AdminController::class, 'dashboard2'])->name('dashbord.admindashbord');
+Route::get('/dashbord/{limit}/{offset}', [AdminController::class, 'dashbordlimit2']);

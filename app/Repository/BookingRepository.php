@@ -41,7 +41,11 @@ class BookingRepository
             $booking->bookingTimeFinish = $bookingTimeFinish;
             $booking->userId = $userId;
             $booking->roomId= $roomId;
-            $booking->bookingTimes = now();
+            $booking->bookingTimes = Carbon::now()->format('H:i:s'); // บันทึกเวลาปัจจุบัน
+            $booking->date = Carbon::now()->toDateString(); // บันทึกวันที่ปัจจุบัน
+            // $booking->bookingTimes = now();
+            // $booking->date = now();
+            // $booking->date = Carbon::now()->toDateString(); // ใช้คอลัมน์ date ที่มีอยู่แล้ว
             return $booking->save();
         }
         return false;
@@ -151,7 +155,7 @@ class BookingRepository
         // J = $limit
 
         $k = ((int)$offset-1)*(int)$limit;
-        $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimes', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', DB::raw('concat(user.username," ",user.phone) as userbookingName'), 'room.roomName')
+        $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimes', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', DB::raw('concat(user.department," ",user.phone) as userbookingName'), 'room.roomName')
         ->join('user','booking.userId','=','user.userId')
         ->join('room', 'booking.roomId','=','room.roomId')
         ->where('user.userId','=',$userId)
@@ -164,7 +168,8 @@ class BookingRepository
 
         $bookingList = [];
         foreach($bookingDat as $dat){
-            $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimes, $dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->userbookingName, $dat->roomName);
+            $bookingList[] = new BookingDTO($dat->bookingId,$dat->bookingAgenda,$dat->bookingDate,$dat->bookingTimes, $dat->bookingTimeStart,$dat->bookingTimeFinish,$dat->date,$dat->userbookingName,$dat->roomName);
+            // $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimes, $dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->date,$dat->userbookingName, $dat->roomName);
         }
 
 
@@ -174,7 +179,7 @@ class BookingRepository
 
     public static function getUserBookingSearch($userId, $roomName, $limit=5,$offset=1){
         $k = ((int)$offset-1)*(int)$limit;
-        $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', DB::raw('concat(user.username," ",user.phone) as userbookingName'), 'room.roomName')
+        $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', DB::raw('concat(user.department," ",user.phone) as userbookingName'), 'room.roomName')
         ->join('user','booking.userId','=','user.userId')
         ->join('room', 'booking.roomId','=','room.roomId')
         ->where('user.userId','=',$userId)
@@ -187,7 +192,8 @@ class BookingRepository
         // dd($bookingDat);
         $bookingList = [];
         foreach($bookingDat as $dat){
-            $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->userbookingName, $dat->roomName,$dat->bookingTimes);
+            $bookingList[] = new BookingDTO($dat->bookingId,$dat->bookingAgenda,$dat->bookingDate,$dat->bookingTimes,$dat->bookingTimeStart,$dat->bookingTimeFinish,$dat->date,$dat->userbookingName,$dat->roomName);
+            // $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->userbookingName,$dat->date, $dat->roomName,$dat->bookingTimes);
         }
         return $bookingList;
     }
@@ -209,7 +215,7 @@ class BookingRepository
     // FOR ADMIN DASHBORD
     public static function getBookingAdmin($limit=5,$offset=1){
         $k = ((int)$offset-1)*(int)$limit;
-        $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', DB::raw('concat(user.username," ",user.phone) as userbookingName'), 'room.roomName')
+        $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingTimes','booking.bookingDate', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', 'booking.date',DB::raw('concat(user.department," ",user.phone) as userbookingName'), 'room.roomName')
         ->join('user','booking.userId','=','user.userId')
         ->join('room', 'booking.roomId','=','room.roomId')
         ->orderBy('booking.bookingDate','desc')
@@ -219,7 +225,8 @@ class BookingRepository
         ->get();
         $bookingList = [];
         foreach($bookingDat as $dat){
-            $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimes,$dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->userbookingName, $dat->roomName);
+            // $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimes,$dat->bookingTimeStart, $dat->bookingTimeFinish,$dat->date, $dat->userbookingName, $dat->roomName);
+            $bookingList[] = new BookingDTO($dat->bookingId,$dat->bookingAgenda,$dat->bookingDate,$dat->bookingTimes,$dat->bookingTimeStart,$dat->bookingTimeFinish,$dat->date,$dat->userbookingName,$dat->roomName);
         }
 
 

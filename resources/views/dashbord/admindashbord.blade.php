@@ -45,6 +45,7 @@
                                     <tr>
                                         <th style="text-align: center">ลำดับ</th>
                                         <th style="text-align: center">หัวข้อการประชุม</th>
+                                        <th style="text-align: center">วันที่ทำการจองห้อง</th>
                                         <th style="text-align: center">วันที่ใช้งาน</th>
                                         <th style="text-align: center">เวลาเริ่ม</th>
                                         <th style="text-align: center">เวลาสิ้นสุด</th>
@@ -62,6 +63,7 @@
                                             <td style="text-align: center">
                                                 {{ $loop->iteration + ((int) $offset - 1) * (int) $limit }}</td>
                                             <td style="text-align: center">{{ $booking->bookingAgenda }}</td>
+                                            <td style="text-align: center">{{ $booking->date." ".$booking->bookingTimes}}</td>
                                             <td style="text-align: center">{{ $booking->bookingDate }}</td>
                                             <td style="text-align: center">{{ $booking->bookingTimeStart }}</td>
                                             <td style="text-align: center">{{ $booking->bookingTimeFinish }}</td>

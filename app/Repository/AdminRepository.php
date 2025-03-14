@@ -23,7 +23,7 @@ class AdminRepository{
     }
     public static function getAllBookingAdmin($limit=5,$offset=1){
         $k = ((int)$offset-1)*(int)$limit;
-        $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', DB::raw('concat(user.department," ",user.phone) as userbookingName'), 'room.roomName')
+        $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', 'booking.date', DB::raw('concat(user.department," ",user.phone) as userbookingName'), 'room.roomName')
         ->join('user','booking.userId','=','user.userId')
         ->join('room', 'booking.roomId','=','room.roomId')
         ->orderBy('booking.bookingDate','desc')
@@ -33,11 +33,19 @@ class AdminRepository{
         ->get();
         $bookingList = [];
         foreach($bookingDat as $dat){
-            $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimes,$dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->userbookingName, $dat->roomName);
+            $bookingList[] = new BookingDTO($dat->bookingId,
+            $dat->bookingAgenda,
+            $dat->bookingDate,
+            $dat->bookingTimes,
+            $dat->bookingTimeStart,
+            $dat->bookingTimeFinish,
+            $dat->date,
+            $dat->userbookingName,
+            $dat->roomName);
         }
 
 
-        return $bookingList;
+        return $bookingDat;
     }
 
     public static function getallUsersBooking(){
@@ -100,7 +108,7 @@ class AdminRepository{
         // J = $limit
         // $k = ($offset - 1) * $limit;
         $k = ((int)$offset-1)*(int)$limit;
-        $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimes', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', DB::raw('concat(user.department," ",user.phone) as userbookingName'), 'room.roomName')
+        $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimes', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', 'booking.date' ,DB::raw('concat(user.department," ",user.phone) as userbookingName'), 'room.roomName')
         ->join('user','booking.userId','=','user.userId')
         ->join('room', 'booking.roomId','=','room.roomId')
         ->where('user.userId','=',$userId)
@@ -115,7 +123,7 @@ class AdminRepository{
 
         $bookingList = [];
         foreach($bookingDat as $dat){
-            $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimes, $dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->userbookingName, $dat->roomName);
+            $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimes, $dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->date , $dat->userbookingName, $dat->roomName);
             // $bookingList[] = new BookingDTO(bookingId: $dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimes,$dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->userbookingName, $dat->roomName);
         }
 
@@ -124,34 +132,10 @@ class AdminRepository{
 
     }
 
-    // new update
-    public static function getSearchByInformation($infomation, $limit=5, $offset=1){
-        $k = ((int)$offset-1)*(int)$limit;
-        $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', DB::raw('concat(user.username," ",user.phone) as userbookingName'), 'room.roomName')
-        ->join('user','booking.userId','=','user.userId')
-        ->join('room', 'booking.roomId','=','room.roomId')
-        ->where('user.username','like',"%{$infomation}%")
-        ->orWhere('room.roomName','like',"%{$infomation}%")
-        ->orderBy('booking.bookingDate','desc')
-        ->orderBy('booking.bookingTimeStart','desc')
-        ->limit($limit)
-        ->offset($k)
-        ->get();
-        // dd($bookingDat);
-        $bookingList = [];
-        foreach($bookingDat as $dat){
-            $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimes, $dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->userbookingName, $dat->roomName);
-            // $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->userbookingName, $dat->roomName,$dat->bookingTimes);
-            // $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimes,$dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->userbookingName, $dat->roomName);
-        }
-        return $bookingList;
-
-    }
-
     public static function getUserBookingSearchbyAdmin($userId, $roomName, $limit=5,$offset=1){
         $k = ((int)$offset-1)*(int)$limit;
         // $k = ($offset - 1) * $limit;
-        $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', DB::raw('concat(user.department," ",user.phone) as userbookingName'), 'room.roomName')
+        $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', 'booking.date',DB::raw('concat(user.department," ",user.phone) as userbookingName'), 'room.roomName')
         ->join('user','booking.userId','=','user.userId')
         ->join('room', 'booking.roomId','=','room.roomId')
         ->where('user.userId','=',$userId)
@@ -164,10 +148,33 @@ class AdminRepository{
         // dd($bookingDat);
         $bookingList = [];
         foreach($bookingDat as $dat){
-            $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->userbookingName, $dat->roomName,$dat->bookingTimes);
+            $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->date,$dat->userbookingName, $dat->roomName,$dat->bookingTimes);
             // $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimes,$dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->userbookingName, $dat->roomName);
         }
         return $bookingList;
+    }
+    public static function getSearchByInformation($infomation, $limit=5, $offset=1){
+        $k = ((int)$offset-1)*(int)$limit;
+        $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingTimes','booking.bookingDate', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', 'booking.date',DB::raw('concat(user.username," ",user.phone) as userbookingName'), 'room.roomName')
+        ->join('user','booking.userId','=','user.userId')
+        ->join('room', 'booking.roomId','=','room.roomId')
+        ->where('user.username','like',"%{$infomation}%")
+        ->orWhere('room.roomName','like',"%{$infomation}%")
+        ->orWhere('booking.bookingAgenda', 'like', "%{$infomation}%")
+        ->orderBy('booking.bookingDate','desc')
+        ->orderBy('booking.bookingTimeStart','desc')
+        ->limit($limit)
+        ->offset($k)
+        ->get();
+        // dd($bookingDat);
+        $bookingList = [];
+        foreach($bookingDat as $dat){
+            $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimes, $dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->date,$dat->userbookingName, $dat->roomName);
+            // $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->userbookingName, $dat->roomName,$dat->bookingTimes);
+            // $bookingList[] = new BookingDTO($dat->bookingId, $dat->bookingAgenda, $dat->bookingDate, $dat->bookingTimes,$dat->bookingTimeStart, $dat->bookingTimeFinish, $dat->userbookingName, $dat->roomName);
+        }
+        return $bookingList;
+
     }
 
     public static function countUserBookingbyAdmin($userId, $limit){
@@ -181,13 +188,13 @@ class AdminRepository{
 
     // return (int) ceil($count/$limit);  // Return the number of pages
     }
-
-    // new count
     public static function countSearchByInformation($infomation, $limit){
         $count = Booking::join('user','booking.userId','=','user.userId')
         ->join('room', 'booking.roomId','=','room.roomId')
         ->where('user.username','like',"%{$infomation}%")
-        ->orWhere('room.roomName','like',"%{$infomation}%")->get()->count();
+        ->orWhere('room.roomName','like',"%{$infomation}%")
+        ->orWhere('booking.bookingAgenda', 'like', "%{$infomation}%")
+        ->get()->count();
         return (int)ceil($count/$limit);
     }
 
@@ -219,7 +226,7 @@ class AdminRepository{
         ->get();
         return $bookingList;
     }
-    }
+}
 
 
 ?>

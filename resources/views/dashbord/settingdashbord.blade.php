@@ -19,7 +19,10 @@
                                 <tr>
                                     <th style="text-align: center">ชื่อผู้ใช้</th>
                                     <th style="text-align: center">เบอร์โทร</th>
-                                    <th style="margin-right: 50px;">เมนู</th>
+                                    {{-- <th style="text-align: center">เมนู</th> --}}
+                                    {{-- <th style="margin-right: 60px;">เมนู</th> --}}
+                                    <th style="text-align: left; padding-left: 60px;">เมนู</th>
+
                                 </tr>
                             </tbody>
                             @foreach ($userList as $user)

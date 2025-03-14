@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Booking;
 use App\Repository\RoomRepository;
+use App\Repository\UsertypeRepository;
+use App\Repository\UserRepository;
+use Illuminate\Support\Facades\DB;
+
+
 use Carbon\Carbon;
 
 class AdminController extends Controller
@@ -21,6 +26,16 @@ class AdminController extends Controller
         $bookingList = BookingRepository::getBookingAdmin($limit, $offset);
         $count = BookingRepository::countBookingAdmin($limit);
         $stringPage = "/admin/dashbord/" . $limit . "/";
+        // dd($bookingList);
+        // $bookingDat = Booking::select('booking.bookingId', 'booking.bookingAgenda', 'booking.bookingDate', 'booking.bookingTimes', 'booking.bookingTimeStart', 'booking.bookingTimeFinish', 'booking.date' ,DB::raw('concat(user.department," ",user.phone) as userbookingName'), 'room.roomName')
+        // ->join('user','booking.userId','=','user.userId')
+        // ->join('room', 'booking.roomId','=','room.roomId')
+        // // ->where('user.userId','=',$userId)
+        // ->orderBy('booking.bookingDate','desc')
+        // ->orderBy('booking.bookingTimeStart','desc')->get();
+        // dd($bookingDat);
+        // ->limit($limit)
+        // ->offset($k)
         return view('dashbord/admindashbord', compact('bookingList', 'offset', 'limit', 'stringPage', 'count'));
     }
 
@@ -288,47 +303,107 @@ class AdminController extends Controller
 
     //     return view('dashbord.userdashbord', compact('bookingList'));
     // // }
-    public function searchByRoom(Request $req) {
-        // $roomName = $req->input('roomName');
-        $offset = 1;
-        $limit = $req->limit;
-        $roomName = $req->roomName;
 
-        // ค้นหาข้อมูลหากมีค่าที่ถูกป้อนเข้ามา
-        if ($roomName) {
-            $bookingList = AdminRepository::searchingallRoom(Auth::user()->userId, $roomName);
-        } else {
-            $bookingList = AdminRepository::searchingallRoom(Auth::user()->userId, null);
-        }
 
-        return view('dashbord/admindashbord', compact('bookingList'));
-    }
-
-    public static function dashbordlimitAdmin($limit,$offset){
+    public static function dashbordlimitAdmin($limit, $offset)
+    {
         $bookingList = AdminRepository::getUserBookingByadmin(Auth::user()->userId, $limit, $offset);
         $count = AdminRepository::countUserBookingbyAdmin(Auth::user()->userId, $limit);
-        $stringPage = "/admin/dashbord/".$limit."/";
-        return view('dashbord/admindashbord',compact('bookingList','offset','limit', 'stringPage','count'));
+        $stringPage = "/admin/dashbord/" . $limit . "/";
+        return view('dashbord/admindashbord', compact('bookingList', 'offset', 'limit', 'stringPage', 'count'));
     }
-    public static function searchbookingbyAdmin(Request $req){
+    public static function searchbookingbyAdmin(Request $req)
+    {
         $offset = 1;
         $limit = $req->limit;
         $roomName = $req->roomName;
-        $bookingList = AdminRepository::getSearchByInformation($roomName,$limit,$offset);
+        // $bookingList = AdminRepository::getSearchByInformation(Auth::user()->userId,$roomName,$limit,$offset);
+        $bookingList = AdminRepository::getSearchByInformation($roomName, $limit, $offset);
 
-        $stringPage = "/admin/searchadmin/".$roomName."/".$limit."/";
+        $stringPage = "/admin/search/" . $roomName . "/" . $limit . "/";
         $count = AdminRepository::countSearchByInformation($roomName, $limit);
-        return view('dashbord/admindashbord',compact('bookingList','offset','limit', 'stringPage','count'));
+        // $count = AdminRepository::countSearchByInformation(Auth::user()->userId,$roomName, $limit);
+        return view('dashbord/admindashbord', compact('bookingList', 'offset', 'limit', 'stringPage', 'count'));
     }
-    public static function searchnextpagebyAdmin($roomName, $limit, $offset){
-        $bookingList = AdminRepository::getSearchByInformation($roomName,$limit,$offset);
-        $stringPage = "/admin/searchadmin/".$roomName."/".$limit."/";
+    public static function searchnextpagebyAdmin($roomName, $limit, $offset)
+    {
+        // $bookingList = AdminRepository::getSearchByInformation(Auth::user()->userId,$roomName,$limit, $offset);
+        $bookingList = AdminRepository::getSearchByInformation($roomName, $limit, $offset);
+        $stringPage = "/admin/searchadmin/" . $roomName . "/" . $limit . "/";
         $count = AdminRepository::countSearchByInformation($roomName, $limit);
-        return view('dashbord/admindashbord',compact('bookingList','offset','limit', 'stringPage','count'));
+        // $count = AdminRepository::countSearchByInformation(Auth::user()->userId,$roomName, $limit);
+        return view('dashbord/admindashbord', compact('bookingList', 'offset', 'limit', 'stringPage', 'count'));
     }
-    public static function getBookigserchbyAdmin(Request $req){
+    public static function getBookigserchbyAdmin(Request $req) {}
+    public static function registerByAdmin()
+    {
+        // render register from
+        $usertypes = UsertypeRepository::getAllUsertype();
+        return view('dashbord/registerByAdmin', compact('usertypes'));
+    }
 
+    public static function registerpostByAdmin(Request $req)
+    {
+        $req->validate([
+        'password' => 'required|string|min:6|confirmed',
+            // 'password_confirmation' => 'required',
+            // 'comfrim_password' => 'require|confirmed'
+        ]);
+        $userTypeId = 2;
+        // recive from save to db
+        // $username = $req->username;
+        // $password = $req->password;
+        // $userTypeId = $req->userTypeId;
+        // $department = $req->department;
+        // $phone = $req->phone;
+
+        // UserRepository::save($email, $password, $username, $firstName, $lastName, $userTypeId);
+        // UserRepository::save($password, $username,  $userTypeId, $department, $phone);
+        // UserRepository::save($req->username,$req->password,$req->userTypeId,$req->department,$req->phone);
+        UserRepository::save($req->username,$req->password,$userTypeId,$req->department,$req->phone);
+        // return redirect('/registerByAdmin');
+        return redirect('/registerByAdmin')->with('sucsess','ลงทะเบียนสำเร็จ');
     }
+    public function dashboard2()
+    {
+        return view('dashbord.admindashbord');
+    }
+    public function dashbordlimit2($limit, $offset = 0)
+    {
+        // Your query logic
+        return view('dashboard.admindashboard', compact('limit', 'offset'));
+    }
+    // public function showPostSetting($userId)
+    //     {
+    //         $user = User::where('userId', $userId)->first();
+
+    //         if (!$user) {
+    //             return redirect()->back()->with('error', 'ไม่พบผู้ใช้');
+    //         }
+
+    //         return view('dashbord.postsetting', compact('user'));
+    //     }
+
+    //     public function updatePassword(Request $request, $userId)
+    //     {
+    //         $request->validate([
+    //             'password' => 'required|min:6|confirmed',
+    //         ]);
+
+    //         $user = User::where('userId', $userId)->first();
+
+    //         if (!$user) {
+    //             return redirect()->back()->with('error', 'ไม่พบผู้ใช้');
+    //         }
+
+    //         // อัปเดตรหัสผ่าน
+    //         $user->password = bcrypt($request->password);
+    //         $user->save();
+
+    //         // return redirect()->route('settingdashbord')->with('success', 'อัปเดตรหัสผ่านสำเร็จ');
+    //         // return redirect()->route('dashbord.updatepasswordByadmin')->with('success', 'อัปเดตรหัสผ่านสำเร็จ');
+    //         return redirect()->route('postsetting', ['userId' => $userId])->with('success', 'อัปเดตรหัสผ่านสำเร็จ');
+    //     }
 
 
 }
